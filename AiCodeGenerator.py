@@ -3,7 +3,7 @@ import sys
 import google.generativeai as genai
 
 # Configure the Gemini API
-genai.configure(api_key='Enter api key')
+genai.configure(api_key="API_KEY")
 
 # Initialize the model
 model = genai.GenerativeModel('gemini-pro')
@@ -24,14 +24,14 @@ def generate_code(prompt):
   response = model.generate_content(structured_prompt)
   return response.text
 
-def generate_input(code):
-  prompt=f"""
-    Generate input for the following code if needed: {code}. No explanations needed
-  """
-  response= model.generate_content(prompt)
-  return response.text
+def generate_test_cases(code):
+   prompt= f"""
+    For the given code {code}, generate test cases with expected input and output. no extra explanation needed
+   """
+   response=model.generate_content(prompt)
+   return response.text
 
-def validate_code(code, inp):
+def validate_code(code, testCase):
     max_attempts = 5
     attempt = 1
     
@@ -40,10 +40,12 @@ def validate_code(code, inp):
         
         prompt = f"""
         Test the following code: {code}
-        against this input: {inp} and fix the errors in code if execution not successful.
+        against this test case with given input and expected output : {testCase} and fix the errors in code if execution not successful.
+        The actual output of code written by you should match the expected output.
         If the code execution is successful, return 'true' else return both:
         1. The error that occurred
         2. The fixed code
+        3. mandatory to show test case input, expected output and actual output
         Format: If error exists, return 'ERROR: <error_message>\nFIXED_CODE: <fixed_code>'
         If no error, just return 'true'
         """
@@ -81,7 +83,7 @@ def main():
   code=generate_code(prompt)
   print("Initial code: \n", code)
 
-  test_input= generate_input(code)
+  test_input= generate_test_cases(code)
   print('Validating code against the following input: \n', test_input)
 
   if validate_code(code, test_input):
