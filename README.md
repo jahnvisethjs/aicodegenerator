@@ -1,3 +1,3 @@
 # AI code generator
 
-code generator that can generate code for the prompt given by user and can validate if the code if right. It also generated input if required.
+code generator that can generate code for the prompt given by user and validates if the code is right. It also generates input if required
