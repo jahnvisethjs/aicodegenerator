@@ -24,12 +24,19 @@ def generate_code(prompt):
   response = model.generate_content(structured_prompt)
   return response.text
 
-def generate_test_cases(code):
-   prompt= f"""
-    For the given code {code}, generate test cases with expected input and output. no extra explanation needed
-   """
-   response=model.generate_content(prompt)
-   return response.text
+def generate_test_cases(prompt):
+    structured_prompt = f"""
+    This {prompt} would be used to generate a python code. Write test cases which can be used to validate if generated python code meets user requirements or not.
+    Requirements:
+    - Test cases should test both run time errors as well as higher order user requirements itself. If a user requirement is not met then that should result in failed test
+    - Pay especial attention to edge cases to generate test cases
+    - Provide only the test cases, no explanations unless specifically asked for it
+    - Test cases should be such that it can be programtically fed into a python code
+    - No markdown formatting
+    """
+    response = model.generate_content(structured_prompt)
+    return response.text
+
 
 def validate_code(code, testCase):
     max_attempts = 5
